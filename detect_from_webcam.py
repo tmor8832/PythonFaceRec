@@ -15,7 +15,6 @@ unkown_path = "./unkown_faces/"
 # Loop through all image paths in trained images folder
 for image_path in os.listdir(trained_path):
 
-
   # Create full input path and read then encode image
   input_path = os.path.join(trained_path, image_path)
   image = cv2.imread(input_path)
@@ -23,7 +22,8 @@ for image_path in os.listdir(trained_path):
   trained_images.append(encoded)
 
   # Add name to face
-  trained_images_names.append(image_path)
+  name = os.path.splitext(image_path)[0]
+  trained_images_names.append(name)
 
 
 # Start webcam, run facial rec every n frame
@@ -77,7 +77,8 @@ while(True):
             unkown_face_encoded = unkown_face_encoded[0]
 
             # Get file name of unkown face
-            unkown_face_name = name + str(unkown_count) + '.jpg'
+            name = name + str(unkown_count)
+            unkown_face_name = name + '.jpg'
             unkown_count += 1
 
             # Encode face
@@ -92,9 +93,8 @@ while(True):
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
 
         # Draw label with name below corrosponding face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 255, 0), cv2.FILLED)
         font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (0, 255, 0), 1)
 
     # Display image w/ bounding boxes over faces
     cv2.imshow("image", frame)

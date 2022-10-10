@@ -9,8 +9,8 @@ trained_path = "./trained_images/"
 trained_images = []
 trained_images_names = []
 
-# Path to place unkown faces
-unkown_path = "./unkown_faces/"
+# Path to place unknown faces
+unknown_path = "./unknown_faces/"
 
 # Loop through all image paths in trained images folder
 for image_path in os.listdir(trained_path):
@@ -30,7 +30,7 @@ for image_path in os.listdir(trained_path):
 vid = cv2.VideoCapture(0)
 n = 1
 frame_count = 0
-unkown_count = 1
+unknown_count = 1
 
 while(True):
 
@@ -42,52 +42,52 @@ while(True):
 
     # Find location of faces in frame, encode those
     unknown_face_locations = face_recognition.face_locations(frame)
-    unkown_image_encoding = face_recognition.face_encodings(frame, unknown_face_locations)
+    unknown_image_encoding = face_recognition.face_encodings(frame, unknown_face_locations)
 
-    # Iterate through encoded faces in unkown image
-    for face_encoding in unkown_image_encoding:
+    # Iterate through encoded faces in unknown image
+    for face_encoding in unknown_image_encoding:
 
       # Find if face is a match to known faces
       matches = face_recognition.compare_faces(trained_images, face_encoding)
-      name = "unkown"
+      name = "unknown"
 
-      # Find known face with shortest distance to unkown one
+      # Find known face with shortest distance to unknown one
       face_distances = face_recognition.face_distance(trained_images, face_encoding)
       best_match_index = np.argmin(face_distances)
       if matches[best_match_index]:
         name = trained_images_names[best_match_index]
 
-      # Append name of face (either found or unkown) to array
+      # Append name of face (either found or unknown) to array
       face_names.append(name)
 
       # Draw name and bounding boxes onto image
       for (top, right, bottom, left), name in zip(unknown_face_locations, face_names):
 
-        if name == "unkown":
+        if name == "unknown":
 
           # Crop image to just face
           crop_face = frame[top: bottom, left: right]
 
           # Encode unknown face
-          unkown_face_encoded = face_recognition.face_encodings(crop_face)
+          unknown_face_encoded = face_recognition.face_encodings(crop_face)
 
           # If high enough conf there is a face, grab first face in array
-          if unkown_face_encoded:
+          if unknown_face_encoded:
 
-            unkown_face_encoded = unkown_face_encoded[0]
+            unknown_face_encoded = unknown_face_encoded[0]
 
-            # Get file name of unkown face
-            name = name + str(unkown_count)
-            unkown_face_name = name + '.jpg'
-            unkown_count += 1
+            # Get file name of unknown face
+            name = name + str(unknown_count)
+            unknown_face_name = name + '.jpg'
+            unknown_count += 1
 
             # Encode face
-            trained_images.append(unkown_face_encoded)
-            trained_images_names.append(unkown_face_name)
+            trained_images.append(unknown_face_encoded)
+            trained_images_names.append(unknown_face_name)
 
             # Save face to file system
-            unkown_face_path = os.path.join(unkown_path, unkown_face_name)
-            cv2.imwrite(unkown_face_path, crop_face)
+            unknown_face_path = os.path.join(unknown_path, unknown_face_name)
+            cv2.imwrite(unknown_face_path, frame)
 
         # Draw bounding box around face
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
